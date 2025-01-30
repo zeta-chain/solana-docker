@@ -19,11 +19,11 @@
 # Set directory used for all build generated files
 ARG CUBICLE=/root
 # Set your solana version here
-ARG SOLANA_VERSION=1.18.15
+ARG SOLANA_VERSION=2.0.24
 # Set folder name for intermediary files during build step
 ARG BUILD_OUTPUT_DIR=${CUBICLE}/solana-output
 
-FROM debian:bookworm as base
+FROM debian:bookworm AS base
 
 RUN apt update && \
     apt-get install -y \
@@ -35,7 +35,7 @@ RUN apt update && \
 SHELL ["/bin/bash", "-c"]
 
 # Container for building the solana binaries
-FROM base as builder
+FROM base AS builder
 ARG CUBICLE
 ARG SOLANA_VERSION
 ARG BUILD_OUTPUT_DIR
@@ -55,10 +55,10 @@ WORKDIR ${CUBICLE}
 RUN if [[ "${SOLANA_VERSION}" == "latest" ]] ;\
     then \
       wget -O solana.tar.gz \
-        https://github.com/solana-labs/solana/archive/refs/heads/master.tar.gz ;\
+        https://github.com/anza-xyz/agave/archive/refs/heads/master.tar.gz ;\
     else \
       wget -O solana.tar.gz \
-        https://github.com/solana-labs/solana/archive/refs/tags/v${SOLANA_VERSION}.tar.gz ;\
+        https://github.com/anza-xyz/agave/archive/refs/tags/v${SOLANA_VERSION}.tar.gz ;\
     fi
 RUN mkdir solana && \
     tar --extract --verbose --gzip --file solana.tar.gz --strip-components=1 --directory solana
@@ -80,7 +80,7 @@ RUN cp -f fetch-spl.sh "${BUILD_OUTPUT_DIR}/bin/"
 RUN cp -f target/release/solana-test-validator "${BUILD_OUTPUT_DIR}/bin/"
 
 # Final resulting multipurpose container
-FROM base as final
+FROM base AS final
 ARG CUBICLE
 ARG SOLANA_VERSION
 ARG BUILD_OUTPUT_DIR
